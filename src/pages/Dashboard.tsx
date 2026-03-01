@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
-import { TrendingUp, AlertTriangle, Bot, DollarSign, Activity, Plus, RefreshCw, Wallet, Zap, TrendingDown, BarChart3, Users } from 'lucide-react';
+import { TrendingUp, Bot, Plus, RefreshCw, Wallet, Zap, BarChart3, Users, ArrowUpRight, ArrowDownRight, Cpu, Radio, Settings, Bell, Search, ChevronRight } from 'lucide-react';
 import useWallet from '../hooks/useWallet';
 import useStore from '../store/useStore';
 import { polymarketClient } from '../services/polymarketClient';
@@ -58,260 +58,293 @@ const Dashboard: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   const refreshData = () => loadData();
   const activeAgents = agents.filter(a => a.status === 'online' || a.status === 'processing').length;
-  
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            POLYMARKET TERMINAL
-          </h1>
-          <p className="text-muted-foreground flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-            {isConnected ? `Connected: ${address?.slice(0, 6)}...${address?.slice(-4)}` : 'Connect your wallet to start trading'}
-          </p>
+    <div className="min-h-screen bg-[#0a0e17] text-white p-6">
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+            <span className="text-xs text-green-500 font-mono">LIVE</span>
+          </div>
+          <div className="h-4 w-px bg-white/20"></div>
+          <span className="text-sm text-gray-400 font-mono">{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+          <span className="text-sm text-gray-500 font-mono">{new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
         </div>
-        <div className="flex space-x-2">
-          <Button variant="outline" size="sm" onClick={refreshData} disabled={loading} className="border-cyan-500/30 hover:bg-cyan-500/10">
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''} text-cyan-400`} />
-            <span className="text-cyan-400">Refresh</span>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/5">
+            <Search className="h-4 w-4" />
           </Button>
-          <Button className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 border-0">
-            <Plus className="h-4 w-4 mr-2" />New Trade
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/5">
+            <Bell className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/5">
+            <Settings className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      {/* Connect Wallet Card */}
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight mb-1">
+            <span className="text-white">POLY</span><span className="text-cyan-400">TERMINAL</span>
+          </h1>
+          <p className="text-sm text-gray-500">
+            {isConnected ? (
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                <span className="font-mono text-green-400">{address?.slice(0, 8)}...{address?.slice(-6)}</span>
+                <span className="text-gray-600">|</span>
+                <span className="text-gray-400">CLOB Connected</span>
+              </span>
+            ) : (
+              <span className="text-gray-500">Connect wallet to access markets</span>
+            )}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={refreshData} 
+            disabled={loading} 
+            className="border-white/20 text-gray-300 hover:bg-white/5 hover:text-white bg-transparent"
+          >
+            <RefreshCw className={`h-3 w-3 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            SYNC
+          </Button>
+          <Button className="bg-cyan-600 hover:bg-cyan-500 text-white border-0 px-4">
+            <Plus className="h-3 w-3 mr-2" />NEW POSITION
+          </Button>
+        </div>
+      </div>
+
+      {/* Connect Wallet Banner */}
       {!isConnected && (
-        <div className="relative overflow-hidden rounded-2xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10"></div>
-          <Card className="relative border-cyan-500/20 bg-black/40 backdrop-blur-xl">
-            <CardContent className="flex items-center justify-center p-12">
-              <div className="text-center max-w-md">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 mb-6 border border-cyan-500/30 glow-primary">
-                  <Wallet className="h-10 w-10 text-cyan-400" />
-                </div>
-                <h2 className="text-2xl font-bold mb-3 text-gradient">Connect Your Wallet</h2>
-                <p className="text-muted-foreground mb-6">Connect MetaMask to Polymarket to start trading with AI-powered signals.</p>
-                <Button onClick={connectWallet} className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 border-0 px-8 py-3 text-lg">
-                  <Wallet className="h-5 w-5 mr-2" />Connect MetaMask
-                </Button>
+        <div className="mb-8 p-6 rounded-lg bg-gradient-to-r from-cyan-900/20 via-purple-900/20 to-pink-900/20 border border-white/10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                <Wallet className="h-6 w-6 text-cyan-400" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Connect MetaMask Wallet</h3>
+                <p className="text-sm text-gray-400">Access Polymarket CLOB for real-time trading</p>
+              </div>
+            </div>
+            <Button onClick={connectWallet} className="bg-cyan-600 hover:bg-cyan-500 text-white border-0 px-6">
+              <Wallet className="h-4 w-4 mr-2" />Connect Wallet
+            </Button>
+          </div>
         </div>
       )}
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Row - Terminal Style */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {/* Portfolio Value */}
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-          <Card className="relative h-full glass-card border-cyan-500/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                  <DollarSign className="h-6 w-6 text-cyan-400" />
-                </div>
-                <Badge variant="outline" className="border-cyan-500/30 text-cyan-400">PORTFOLIO</Badge>
-              </div>
-              <div className="mt-4">
-                <p className="text-3xl font-bold text-white">{formatCurrency(portfolioValue)}</p>
-                <p className="text-sm text-muted-foreground mt-1">Total Value</p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="bg-[#111827] rounded-lg p-4 border border-white/5 hover:border-cyan-500/30 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-wider">Portfolio Value</span>
+            <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
+          </div>
+          <p className="text-2xl font-bold text-white font-mono">{formatCurrency(portfolioValue)}</p>
+          <p className="text-xs text-gray-500 mt-1">Total Holdings</p>
         </div>
 
         {/* Today's P&L */}
-        <div className="relative group">
-          <div className={`absolute -inset-0.5 bg-gradient-to-r rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity ${todayPnL >= 0 ? 'from-green-500 to-cyan-500' : 'from-red-500 to-pink-500'}`}></div>
-          <Card className="relative h-full glass-card border-white/5">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className={`p-3 rounded-xl ${todayPnL >= 0 ? 'bg-green-500/10 border border-green-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
-                  {todayPnL >= 0 ? <TrendingUp className="h-6 w-6 text-green-400" /> : <TrendingDown className="h-6 w-6 text-red-400" />}
-                </div>
-                <Badge variant="outline" className={todayPnL >= 0 ? 'border-green-500/30 text-green-400' : 'border-red-500/30 text-red-400'}>TODAY</Badge>
-              </div>
-              <div className="mt-4">
-                <p className={`text-3xl font-bold ${todayPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {todayPnL >= 0 ? '+' : ''}{formatCurrency(todayPnL)}
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">Today's P&L</p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="bg-[#111827] rounded-lg p-4 border border-white/5 hover:border-green-500/30 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-wider">Today's P&L</span>
+            {todayPnL >= 0 ? <ArrowUpRight className="h-4 w-4 text-green-500" /> : <ArrowDownRight className="h-4 w-4 text-red-500" />}
+          </div>
+          <p className={`text-2xl font-bold font-mono ${todayPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            {todayPnL >= 0 ? '+' : ''}{formatCurrency(todayPnL)}
+          </p>
+          <p className={`text-xs mt-1 ${todayPnL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {todayPnL >= 0 ? '+' : ''}{(todayPnL / (portfolioValue || 1) * 100).toFixed(2)}%
+          </p>
         </div>
 
         {/* Total P&L */}
-        <div className="relative group">
-          <div className={`absolute -inset-0.5 bg-gradient-to-r rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity ${totalPnL >= 0 ? 'from-purple-500 to-pink-500' : 'from-red-500 to-orange-500'}`}></div>
-          <Card className="relative h-full glass-card border-white/5">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className={`p-3 rounded-xl ${totalPnL >= 0 ? 'bg-purple-500/10 border border-purple-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
-                  <Activity className={`h-6 w-6 ${totalPnL >= 0 ? 'text-purple-400' : 'text-red-400'}`} />
-                </div>
-                <Badge variant="outline" className={totalPnL >= 0 ? 'border-purple-500/30 text-purple-400' : 'border-red-500/30 text-red-400'}>TOTAL</Badge>
-              </div>
-              <div className="mt-4">
-                <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-purple-400' : 'text-red-400'}`}>
-                  {totalPnL >= 0 ? '+' : ''}{formatCurrency(totalPnL)}
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">All Time P&L</p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="bg-[#111827] rounded-lg p-4 border border-white/5 hover:border-purple-500/30 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-wider">Total P&L</span>
+            {totalPnL >= 0 ? <ArrowUpRight className="h-4 w-4 text-purple-500" /> : <ArrowDownRight className="h-4 w-4 text-red-500" />}
+          </div>
+          <p className={`text-2xl font-bold font-mono ${totalPnL >= 0 ? 'text-purple-400' : 'text-red-400'}`}>
+            {totalPnL >= 0 ? '+' : ''}{formatCurrency(totalPnL)}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">All Time</p>
         </div>
 
         {/* Active Agents */}
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-          <Card className="relative h-full glass-card border-pink-500/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-pink-500/10 border border-pink-500/20">
-                  <Bot className="h-6 w-6 text-pink-400" />
-                </div>
-                <Badge variant="outline" className="border-pink-500/30 text-pink-400">AI AGENTS</Badge>
-              </div>
-              <div className="mt-4">
-                <p className="text-3xl font-bold text-white">{activeAgents}<span className="text-lg text-muted-foreground">/{agents.length}</span></p>
-                <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
-                  <Zap className="h-3 w-3 text-yellow-400" /> Active Agents
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="bg-[#111827] rounded-lg p-4 border border-white/5 hover:border-pink-500/30 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-wider">AI Agents</span>
+            <Cpu className="h-4 w-4 text-pink-500" />
+          </div>
+          <p className="text-2xl font-bold text-white font-mono">{activeAgents}<span className="text-gray-500 text-lg">/{agents.length}</span></p>
+          <p className="text-xs text-pink-500 mt-1 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse"></span>
+            Active
+          </p>
         </div>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Left - Markets (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Positions */}
-          <Card className="glass-card border-white/5 overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-white/5">
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-cyan-400" />
-                <span>Open Positions</span>
-              </CardTitle>
-              <Button variant="ghost" size="sm" className="text-cyan-400 hover:bg-cyan-500/10">View All</Button>
+          {/* Live Markets */}
+          <Card className="bg-[#111827] border-white/5">
+            <CardHeader className="pb-3 border-b border-white/5">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+                  <Radio className="h-4 w-4 text-green-500" />
+                  LIVE MARKETS
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                  <span className="text-xs text-gray-500">REAL-TIME</span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="divide-y divide-white/5">
-                {positions.length === 0 ? (
-                  <div className="text-center py-12">
-                    <BarChart3 className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">No open positions</p>
-                  </div>
-                ) : (
-                  positions.map((position: any, index: number) => (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-white/5">
+                      <th className="text-left text-xs text-gray-500 font-mono uppercase tracking-wider p-3">Market</th>
+                      <th className="text-right text-xs text-gray-500 font-mono uppercase tracking-wider p-3">Price</th>
+                      <th className="text-right text-xs text-gray-500 font-mono uppercase tracking-wider p-3">24h %</th>
+                      <th className="text-right text-xs text-gray-500 font-mono uppercase tracking-wider p-3">Volume</th>
+                      <th className="text-right text-xs text-gray-500 font-mono uppercase tracking-wider p-3">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {realMarkets.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="text-center py-8 text-gray-500">
+                          <div className="flex flex-col items-center gap-2">
+                            <TrendingUp className="h-6 w-6 text-gray-600" />
+                            <span>Loading market data...</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      realMarkets.slice(0, 8).map((market) => (
+                        <tr key={market.id} className="border-b border-white/5 hover:bg-white/5 cursor-pointer">
+                          <td className="p-3">
+                            <p className="text-sm text-white font-medium truncate max-w-[200px]">{market.name}</p>
+                          </td>
+                          <td className="p-3 text-right">
+                            <span className="text-sm text-white font-mono">{market.currentPrice?.toFixed(3)}</span>
+                          </td>
+                          <td className="p-3 text-right">
+                            <span className={`text-sm font-mono ${market.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              {market.change24h >= 0 ? '+' : ''}{market.change24h?.toFixed(2)}%
+                            </span>
+                          </td>
+                          <td className="p-3 text-right">
+                            <span className="text-sm text-gray-400 font-mono">${(market.volume || 0).toLocaleString()}</span>
+                          </td>
+                          <td className="p-3 text-right">
+                            <Button variant="ghost" size="sm" className="text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10">
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Open Positions */}
+          <Card className="bg-[#111827] border-white/5">
+            <CardHeader className="pb-3 border-b border-white/5">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-cyan-400" />
+                  OPEN POSITIONS
+                </CardTitle>
+                <span className="text-xs text-gray-500">{positions.length} active</span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {positions.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <BarChart3 className="h-8 w-8 text-gray-600 mx-auto mb-2" />
+                  <p className="text-sm">No open positions</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-white/5">
+                  {positions.slice(0, 5).map((position: any, index: number) => (
                     <div key={index} className="p-4 hover:bg-white/5">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <p className="font-medium truncate">{position.marketName}</p>
-                          <div className="flex items-center mt-2 gap-2">
-                            <Badge className={position.side === 'buy' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}>
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge className={`text-xs ${position.side === 'buy' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}`}>
                               {position.side.toUpperCase()}
                             </Badge>
-                            <span className="text-sm text-muted-foreground">{position.size} shares</span>
+                            <span className="text-xs text-gray-500 font-mono">{position.size} shares</span>
                           </div>
+                          <p className="text-sm text-white truncate">{position.marketName}</p>
                         </div>
                         <div className="text-right">
-                          <p className={`font-bold ${position.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          <p className={`text-sm font-mono font-semibold ${position.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             {position.pnl >= 0 ? '+' : ''}{formatCurrency(position.pnl)}
                           </p>
+                          <p className="text-xs text-gray-500">@ {position.entryPrice.toFixed(3)}</p>
                         </div>
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Markets */}
-          <Card className="glass-card border-white/5 overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-white/5">
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-purple-400" />
-                <span>Live Markets</span>
-              </CardTitle>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span className="text-sm text-muted-foreground">Live</span>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-white/5">
-                {realMarkets.length === 0 ? (
-                  <div className="text-center py-12">
-                    <TrendingUp className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">Loading markets...</p>
-                  </div>
-                ) : (
-                  realMarkets.slice(0, 8).map((market) => (
-                    <div key={market.id} className="p-4 hover:bg-white/5 cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <p className="font-medium truncate">{market.name}</p>
-                          <p className="text-sm text-muted-foreground">Vol: ${(market.volume || 0).toLocaleString()}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-white">{market.currentPrice?.toFixed(3)}</p>
-                          <p className={`text-sm ${market.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {market.change24h >= 0 ? '+' : ''}{market.change24h?.toFixed(2)}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
-        
-        {/* Right Column */}
+
+        {/* Right Sidebar */}
         <div className="space-y-6">
-          {/* AI Agents */}
-          <Card className="glass-card border-white/5 overflow-hidden">
-            <CardHeader className="pb-4 border-b border-white/5">
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="h-5 w-5 text-pink-400" />
-                <span>AI Agents</span>
+          {/* AI Agents Panel */}
+          <Card className="bg-[#111827] border-white/5">
+            <CardHeader className="pb-3 border-b border-white/5">
+              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+                <Bot className="h-4 w-4 text-pink-500" />
+                AI AGENTS
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-white/5">
                 {agents.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Bot className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No agents active</p>
+                  <div className="text-center py-6 text-gray-500">
+                    <Bot className="h-6 w-6 text-gray-600 mx-auto mb-2" />
+                    <p className="text-xs">No agents active</p>
                   </div>
                 ) : (
                   agents.map((agent) => (
-                    <div key={agent.id} className="p-4 hover:bg-white/5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${agent.status === 'online' ? 'bg-green-500/20 border border-green-500/30' : 'bg-muted/20 border border-muted/30'}`}>
-                            <Bot className={`h-5 w-5 ${agent.status === 'online' ? 'text-green-400' : 'text-muted-foreground'}`} />
-                          </div>
-                          <div>
-                            <p className="font-medium">{agent.name}</p>
-                            <p className="text-xs text-muted-foreground">{agent.confidence}% confidence</p>
-                          </div>
+                    <div key={agent.id} className="p-3 hover:bg-white/5">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${agent.status === 'online' ? 'bg-green-500' : agent.status === 'processing' ? 'bg-yellow-500 animate-pulse' : agent.status === 'error' ? 'bg-red-500' : 'bg-gray-500'}`}></div>
+                          <span className="text-sm text-white">{agent.name}</span>
                         </div>
-                        <Badge className={agent.status === 'online' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}>
-                          {agent.status}
-                        </Badge>
+                        <span className="text-xs text-gray-500 font-mono">{agent.confidence}%</span>
+                      </div>
+                      <div className="w-full bg-gray-800 rounded-full h-1">
+                        <div 
+                          className={`h-1 rounded-full ${agent.confidence > 80 ? 'bg-green-500' : agent.confidence > 60 ? 'bg-yellow-500' : 'bg-red-500'}`} 
+                          style={{ width: `${agent.confidence}%` }}
+                        ></div>
                       </div>
                     </div>
                   ))
@@ -319,28 +352,28 @@ const Dashboard: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Alerts */}
-          <Card className="glass-card border-white/5 overflow-hidden">
-            <CardHeader className="pb-4 border-b border-white/5">
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                <span>System Alerts</span>
+
+          {/* Recent Alerts */}
+          <Card className="bg-[#111827] border-white/5">
+            <CardHeader className="pb-3 border-b border-white/5">
+              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+                <Bell className="h-4 w-4 text-yellow-500" />
+                RECENT ALERTS
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-white/5">
                 {alerts.length === 0 ? (
-                  <div className="text-center py-8">
-                    <AlertTriangle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No alerts</p>
+                  <div className="text-center py-6 text-gray-500">
+                    <Bell className="h-6 w-6 text-gray-600 mx-auto mb-2" />
+                    <p className="text-xs">No alerts</p>
                   </div>
                 ) : (
-                  alerts.slice(0, 5).map((alert, index) => (
-                    <div key={index} className="p-4 hover:bg-white/5">
-                      <div className="flex items-start gap-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${alert.severity === 'danger' ? 'bg-red-500' : alert.severity === 'warning' ? 'bg-yellow-500' : 'bg-cyan-500'}`}></div>
-                        <p className="text-sm">{alert.message}</p>
+                  alerts.slice(0, 4).map((alert, index) => (
+                    <div key={index} className="p-3">
+                      <div className="flex items-start gap-2">
+                        <div className={`w-2 h-2 rounded-full mt-1.5 ${alert.severity === 'danger' ? 'bg-red-500' : alert.severity === 'warning' ? 'bg-yellow-500' : 'bg-cyan-500'}`}></div>
+                        <p className="text-xs text-gray-300">{alert.message}</p>
                       </div>
                     </div>
                   ))
@@ -350,27 +383,29 @@ const Dashboard: React.FC = () => {
           </Card>
 
           {/* Quick Actions */}
-          <Card className="glass-card border-gradient">
-            <CardContent className="p-6">
-              <h3 className="font-bold mb-4 flex items-center gap-2">
-                <Zap className="h-4 w-4 text-yellow-400" />
-                Quick Actions
-              </h3>
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="border-cyan-500/30 hover:bg-cyan-500/10">
-                  <Users className="h-4 w-4 mr-2 text-cyan-400" />
+          <Card className="bg-[#111827] border-white/5">
+            <CardHeader className="pb-3 border-b border-white/5">
+              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+                <Zap className="h-4 w-4 text-yellow-500" />
+                QUICK ACTIONS
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-3">
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" className="text-xs border-white/20 text-gray-300 hover:bg-white/5 hover:text-white bg-transparent justify-start">
+                  <Users className="h-3 w-3 mr-1 text-cyan-400" />
                   Copy Trade
                 </Button>
-                <Button variant="outline" className="border-purple-500/30 hover:bg-purple-500/10">
-                  <BarChart3 className="h-4 w-4 mr-2 text-purple-400" />
+                <Button variant="outline" className="text-xs border-white/20 text-gray-300 hover:bg-white/5 hover:text-white bg-transparent justify-start">
+                  <BarChart3 className="h-3 w-3 mr-1 text-purple-400" />
                   Analytics
                 </Button>
-                <Button variant="outline" className="border-pink-500/30 hover:bg-pink-500/10">
-                  <Bot className="h-4 w-4 mr-2 text-pink-400" />
+                <Button variant="outline" className="text-xs border-white/20 text-gray-300 hover:bg-white/5 hover:text-white bg-transparent justify-start">
+                  <Bot className="h-3 w-3 mr-1 text-pink-400" />
                   AI Agents
                 </Button>
-                <Button variant="outline" className="border-green-500/30 hover:bg-green-500/10">
-                  <TrendingUp className="h-4 w-4 mr-2 text-green-400" />
+                <Button variant="outline" className="text-xs border-white/20 text-gray-300 hover:bg-white/5 hover:text-white bg-transparent justify-start">
+                  <TrendingUp className="h-3 w-3 mr-1 text-green-400" />
                   Markets
                 </Button>
               </div>
